@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Configuration
+config.yml
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
