@@ -30,10 +30,37 @@ A bridge service that retrieves monitor statuses from a remote Uptime Kuma insta
 
 ### Prerequisites
 
-- Node.js 14+
+- Docker (for Docker installation)
+- Node.js 14+ (for manual installation)
 - Access to an Uptime Kuma instance with API key
 
-### Setup
+### Option 1: Docker (Recommended)
+
+1. Create a `config.yml` file:
+```yaml
+source: http://ip:port
+apiKey: your_api_key_here
+pollInterval: 30
+port: 3000
+host: http://your-public-domain.com:3000
+```
+
+2. Run the container:
+```bash
+docker run -d \
+  --restart=always \
+  -p 3000:3000 \
+  -v ./config.yml:/app/config.yml:ro \
+  --name subtime-kuma \
+  ghcr.io/bsdev90/subtime-kuma:latest
+```
+
+3. View logs:
+```bash
+docker logs -f subtime-kuma
+```
+
+### Option 2: Manual Setup
 
 1. Clone the repository:
 ```bash
@@ -60,6 +87,11 @@ port: 3000
 host: http://your-public-domain.com:3000
 ```
 
+5. Start the service:
+```bash
+npm start
+```
+
 ### Configuration
 
 | Key | Description | Example |
@@ -79,18 +111,6 @@ host: http://your-public-domain.com:3000
 5. Copy the generated key
 
 ## Usage
-
-### Start the service
-
-```bash
-npm start
-```
-
-Or:
-
-```bash
-node app.js
-```
 
 ### Access the dashboard
 
