@@ -1,6 +1,6 @@
 {
   "name": "subtime-kuma",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bridge to retrieve monitor statuses from a remote Uptime Kuma instance and feed them to a main Uptime Kuma instance",
   "main": "app.js",
   "scripts": {
@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "axios": "^1.12.2",
-    "js-yaml": "^4.1.0"
+    "express": "^5.1.0",
+    "js-yaml": "^4.1.0",
+    "nunjucks": "^3.2.4"
   }
 }

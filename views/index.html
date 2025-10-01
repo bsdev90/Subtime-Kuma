@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Subtime Kuma - Monitors</title>
+    <meta http-equiv="refresh" content="30">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="header">
+        <img src="/logo.png" alt="Subtime Kuma" class="logo">
+        <div class="header-content">
+            <h1>Subtime Kuma</h1>
+            <div class="info-capsules">
+                <div class="info-capsule"><strong>Source:</strong> {{ source }}</div>
+                <div class="info-capsule"><strong>Last update:</strong> {{ lastUpdate }}</div>
+                <div class="info-capsule"><strong>Poll interval:</strong> {{ pollInterval }}s</div>
+                <div class="info-capsule"><strong>Total monitors:</strong> {{ totalMonitors }}</div>
+            </div>
+        </div>
+    </div>
+
+    {% if lastError %}
+    <div class="error"><strong>⚠️ Last error:</strong> {{ lastError }}</div>
+    {% endif %}
+
+    {% if noMonitors %}
+    <p>No monitors found or data not yet loaded.</p>
+    {% else %}
+    {% for monitor in monitors %}
+    <div class="monitor {{ monitor.statusClass }}">
+        <div class="monitor-name">
+            <div class="status-indicator {{ monitor.statusClass }}"></div>
+            {{ monitor.name }}
+            <span class="status {{ monitor.statusClass }}">{{ monitor.status }}</span>
+        </div>
+        {% if monitor.type == 'http' or monitor.type == 'https' %}
+        <div class="monitor-url">
+            {% if monitor.url %}
+                {{ monitor.url }}
+                <a href="{{ monitor.url }}" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+                    <svg class="external-link-icon" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                        <path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                    </svg>
+                </a>
+            {% else %}
+                N/A
+            {% endif %}
+        </div>
+        {% endif %}
+        <div class="monitor-details">
+            <div class="info-capsule"><strong>Type:</strong> {{ monitor.type }}</div>
+            {% if monitor.responseTime and monitor.responseTime >= 0 %}
+            <div class="info-capsule"><strong>Response time:</strong> {{ monitor.responseTime }}ms</div>
+            {% endif %}
+            {% if monitor.certDaysRemaining %}
+            <div class="info-capsule"><strong>Certificate expires in:</strong> {{ monitor.certDaysRemaining }} days</div>
+            {% endif %}
+        </div>
+        <div class="endpoint">
+            <div class="endpoint-label"><strong>URL for Uptime Kuma:</strong></div>
+            <div class="endpoint-url" id="url-{{ loop.index0 }}">{{ monitor.fullUrl }}</div>
+            <button class="copy-btn" onclick="copyToClipboard('url-{{ loop.index0 }}', this)">Copy</button>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <script>
+    function copyToClipboard(elementId, button) {
+        const element = document.getElementById(elementId);
+        const text = element.textContent;
+
+        // Fallback method for environments where clipboard API is not available
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(button);
+            }).catch(err => {
+                fallbackCopy(text, button);
+            });
+        } else {
+            fallbackCopy(text, button);
+        }
+    }
+
+    function fallbackCopy(text, button) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        try {
+            document.execCommand('copy');
+            showCopied(button);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            button.textContent = 'Failed';
+            setTimeout(() => {
+                button.textContent = 'Copy';
+            }, 2000);
+        }
+
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(button) {
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('copied');
+        }, 2000);
+    }
+    </script>
+</body>
+</html>
